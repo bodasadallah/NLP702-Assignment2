@@ -4,7 +4,7 @@ from peft import get_peft_model, LoraConfig
 import wandb
 from datasets import load_dataset
 from transformers import TrainingArguments, Trainer
-
+import evaluate
 
 # Define a function to preprocess data for the model
 def tokenize_function(examples, tokenizer):
@@ -33,6 +33,8 @@ if __name__ == "__main__":
     tokenizer = BertTokenizerFast.from_pretrained(args.model_name)
 
 
+    base_model = AutoModelForSequenceClassification.from_pretrained(args.model_name, num_labels=num_labels)
+
     # Preprocess training and validation data
     train_dataset = train_dataset.map(tokenize_function,fn_kwargs={"tokenizer":tokenizer}, batched=True)
     val_dataset = val_dataset.map(tokenize_function,fn_kwargs={"tokenizer":tokenizer}, batched=True)
@@ -47,7 +49,7 @@ if __name__ == "__main__":
                                 intermediate_size=args.intermediate_size,
                                 hidden_act=args.hidden_act,
                             )
-        model = BertModel(config)
+        model = AutoModelForSequenceClassification(config)
 
         print( '*' * 20,'Training Custom Model', '*' * 20)
         print(model)
@@ -71,8 +73,7 @@ if __name__ == "__main__":
             task_type="CAUSAL_LM",
             target_modules = lora_target_modules)
         
-        base_model = AutoModelForSequenceClassification.from_pretrained(args.model_name)
-
+    
         model = get_peft_model(base_model, lora_config)
 
         print(model)
@@ -82,7 +83,7 @@ if __name__ == "__main__":
     elif args.training_type == 'finetuning':
 
         print( '*' * 20, 'Normal Finetuning ', '*' * 20)
-        model = AutoModelForSequenceClassification.from_pretrained(args.model_name)
+        model = base_model
         print(model)
 
 
@@ -115,6 +116,7 @@ if __name__ == "__main__":
         logging_first_step=True,
         save_total_limit=args.save_total_limit,
         load_best_model_at_end=True,
+        metric_for_best_model="eval_loss"
     )
 
         # Create the Trainer
@@ -123,6 +125,8 @@ if __name__ == "__main__":
         args=training_arguments,
         train_dataset=train_dataset,
         eval_dataset=val_dataset,
+        compute_metrics=compute_metrics,
+        callbacks = [EarlyStoppingCallback(early_stopping_patience = 3)]
     )
 
     # Start training
@@ -131,3 +135,15 @@ if __name__ == "__main__":
     # Save the fine-tuned model
     trainer.save_model(f"{save_path}/best")  # Adjust save directory
     trainer.evaluate(test_dataset)
+
+
+
+
+
+# Setup evaluation 
+metric = evaluate.load("accuracy")
+
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    predictions = np.argmax(logits, axis=-1)
+    return metric.compute(predictions=predictions, references=labels)
