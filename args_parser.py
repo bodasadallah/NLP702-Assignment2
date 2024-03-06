@@ -11,7 +11,7 @@ def get_args():
 
 def add_args(parser: argparse.ArgumentParser):
 
-    parser.add_argument('--model_type',
+    parser.add_argument('--training_type',
                             type=str,
                             default="bert")
     
@@ -27,9 +27,9 @@ def add_args(parser: argparse.ArgumentParser):
     parser.add_argument('--report_to',
                             type=str,
                             default="wandb")
-    parser.add_argument('--max_steps',
+    parser.add_argument('--epochs',
                             type=int,
-                            default=10000)
+                            default=3)
     parser.add_argument('--save_steps',
                             type=int,
                             default=400)
@@ -55,13 +55,6 @@ def add_args(parser: argparse.ArgumentParser):
     parser.add_argument('--save_total_limit',
                             type=int,
                             default=2)
-    parser.add_argument('--run_name',
-                            type=str,
-                            required=True)
-  
-    parser.add_argument('--field',
-                            type=str,
-                            default='prompt')
     parser.add_argument('--model_name',
                             type=str,
                             default='bert-base-uncased')
