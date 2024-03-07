@@ -1,16 +1,23 @@
 from args_parser import get_args
-from transformers import BertConfig, BertModel, AutoModelForSequenceClassification, AutoConfig,BertTokenizerFast
+from transformers import BertConfig, AutoModelForSequenceClassification,BertTokenizerFast, EarlyStoppingCallback
 from peft import get_peft_model, LoraConfig
 import wandb
 from datasets import load_dataset
 from transformers import TrainingArguments, Trainer
 import evaluate
+import numpy as np
 
 # Define a function to preprocess data for the model
 def tokenize_function(examples, tokenizer):
     tokenized = tokenizer(examples["utt"], padding="max_length", truncation=True)
     tokenized['label'] = examples['label']
     return tokenized
+
+
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    predictions = np.argmax(logits, axis=-1)
+    return metric.compute(predictions=predictions, references=labels)
 
 if __name__ == "__main__":
 
@@ -112,13 +119,14 @@ if __name__ == "__main__":
         warmup_ratio=args.warmup_ratio,
         lr_scheduler_type=args.lr_scheduler_type,
         report_to=args.report_to,
-        include_inputs_for_metrics=True,
         logging_first_step=True,
         save_total_limit=args.save_total_limit,
         load_best_model_at_end=True,
         metric_for_best_model="eval_loss"
     )
 
+    # Setup evaluation 
+    metric = evaluate.load("accuracy")
         # Create the Trainer
     trainer = Trainer(
         model=model,
@@ -140,10 +148,5 @@ if __name__ == "__main__":
 
 
 
-# Setup evaluation 
-metric = evaluate.load("accuracy")
 
-def compute_metrics(eval_pred):
-    logits, labels = eval_pred
-    predictions = np.argmax(logits, axis=-1)
-    return metric.compute(predictions=predictions, references=labels)
+

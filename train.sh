@@ -17,18 +17,19 @@
 #########################3 Normal Training ###############################
 
 python train.py \
+--save_dir='/l/users/abdelrahman.sadallah/nlp702-hw2' \
 --training_type="finetuning" \
 --epochs=3 \
 --save_steps=100 \
 --eval_steps=100 \
 --logging_steps=100 \
 --report_to="all" \
---model_name='bert-base-uncased' \
+--model_name='bert-large-uncased' \
 --per_device_train_batch_size=32 \
 --per_device_val_batch_size=16 \
 --warmup_ratio=0.1 \
 --lr_scheduler_type="linear" \
---learning_rate=1e-6 \
+--learning_rate=1e-4 \
 echo "ending "
 
 
