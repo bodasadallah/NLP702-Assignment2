@@ -105,9 +105,15 @@ def add_args(parser: argparse.ArgumentParser):
     parser.add_argument('--hidden_act',
                             type=str,
                             default="gelu")
+    
 #################################### Distilation Arguments ########################################
-
-
+    parser.add_argument('--stu_hidden_size', type=int, help="Student model hidden size.")
+    parser.add_argument('--stu_num_hidden_layers', type=int, help="Student model number of hidden layers.")
+    parser.add_argument('--stu_num_attention_heads', type=int, help="Student model number of attention heads.")
+    parser.add_argument('--stu_intermediate_size', type=int, help="Student model intermediate size.")
+    parser.add_argument('--stu_hidden_act',
+                            type=str,
+                            default="gelu")
 
 ######################################### Peft Arguments ########################################
         ##################################### LORA #####################################

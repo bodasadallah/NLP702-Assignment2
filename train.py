@@ -1,11 +1,14 @@
 from args_parser import get_args
 from transformers import BertConfig, AutoModelForSequenceClassification,BertTokenizerFast, EarlyStoppingCallback
 from peft import get_peft_model, LoraConfig
-import wandb
+# import wandb
 from datasets import load_dataset
 from transformers import TrainingArguments, Trainer
 import evaluate
 import numpy as np
+import torch 
+from torch.nn import KLDivLoss, CrossEntropyLoss, Softmax, LogSoftmax
+
 
 # Define a function to preprocess data for the model
 def tokenize_function(examples, tokenizer):
@@ -13,23 +16,52 @@ def tokenize_function(examples, tokenizer):
     tokenized['label'] = examples['label']
     return tokenized
 
-
 def compute_metrics(eval_pred):
     logits, labels = eval_pred
     predictions = np.argmax(logits, axis=-1)
     return metric.compute(predictions=predictions, references=labels)
 
+class DistillationTrainer(Trainer):
+    def __init__(self, teacher_model=None, alpha=0.5, temperature=2.0, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.teacher_model = teacher_model
+        self.alpha = alpha
+        self.temperature = temperature
+        self.softmax = Softmax(dim=-1)
+        self.log_softmax = LogSoftmax(dim=-1)
+        self.kl_div_loss = KLDivLoss(reduction="batchmean")
+        self.ce_loss = CrossEntropyLoss()
+
+    def compute_loss(self, model, inputs, return_outputs=False):
+        labels = inputs.pop("labels")
+        outputs = model(**inputs)
+        student_logits = outputs.logits
+        loss_ce = self.ce_loss(student_logits, labels)
+
+        if self.teacher_model is not None:
+            with torch.no_grad():
+                teacher_outputs = self.teacher_model(**inputs)
+                teacher_logits = teacher_outputs.logits
+            loss_kl = self.kl_div_loss(
+                self.log_softmax(student_logits / self.temperature),
+                self.softmax(teacher_logits / self.temperature)
+            )
+            loss = (self.alpha * loss_kl) + ((1 - self.alpha) * loss_ce)
+        else:
+            loss = loss_ce
+
+        return (loss, outputs) if return_outputs else loss
+
+
+
 if __name__ == "__main__":
-
-
     args = get_args()
-
     for arg in vars(args):
         print(arg, getattr(args, arg))
 
-
-    wandb.init(project=f"nlphw2_{args.model_name}_{args.training_type}" )
-
+    # wandb.init(project=f"nlphw2_{args.model_name}_{args.training_type}" )
+    
+    print("Loading dataset")
     # Load the Amazon Science Massive dataset (English)
     train_val_test = load_dataset("AmazonScience/massive", 'en-US').rename_columns({"intent":"label"})
     train_dataset = train_val_test["train"]
@@ -49,14 +81,15 @@ if __name__ == "__main__":
 
 
     ##################### Custom Bert Model ######################3
-    if args.training_type == 'cutsom':
+    if args.training_type == 'custom':
         config = BertConfig(    hidden_size=args.hidden_size,
                                 num_hidden_layers=args.num_hidden_layers,
                                 num_attention_heads=args.num_attention_heads,
                                 intermediate_size=args.intermediate_size,
                                 hidden_act=args.hidden_act,
                             )
-        model = AutoModelForSequenceClassification(config)
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        model = AutoModelForSequenceClassification.from_config(config).to(device)
 
         print( '*' * 20,'Training Custom Model', '*' * 20)
         print(model)
@@ -95,8 +128,23 @@ if __name__ == "__main__":
 
 
 
-
-
+    elif args.training_type == 'distillation':
+        print("*" * 20, "Distilling Model", "*" * 20)
+        teacher_model = AutoModelForSequenceClassification.from_pretrained(args.model_name, num_labels=num_labels)
+        teacher_model.eval()
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        teacher_model.to(device)
+ 
+        student_model_config = BertConfig(
+            hidden_size= args.stu_hidden_size, 
+            num_hidden_layers= args.stu_num_hidden_layers,
+            num_attention_heads= args.stu_num_attention_heads,
+            intermediate_size= args.stu_intermediate_size,
+            num_labels= num_labels,
+            hidden_act=args.stu_hidden_act,
+        )
+        student_model = AutoModelForSequenceClassification.from_config(student_model_config)
+        student_model.to(device)
 
     save_path = f'{args.save_dir}/{args.model_name}_{args.training_type}'
 
@@ -125,26 +173,37 @@ if __name__ == "__main__":
         metric_for_best_model="eval_loss"
     )
 
-    # Setup evaluation 
     metric = evaluate.load("accuracy")
-        # Create the Trainer
-    trainer = Trainer(
-        model=model,
-        args=training_arguments,
-        train_dataset=train_dataset,
-        eval_dataset=val_dataset,
-        compute_metrics=compute_metrics,
-        callbacks = [EarlyStoppingCallback(early_stopping_patience = 3)]
-    )
+    
+    if args.training_type != "distillation":
+        trainer = Trainer(
+            model=model,
+            args=training_arguments,
+            train_dataset=train_dataset,
+            eval_dataset=val_dataset,
+            compute_metrics=compute_metrics,
+            callbacks = [EarlyStoppingCallback(early_stopping_patience = 3)]
+        )
+    elif args.training_type == "distillation":
+        trainer = DistillationTrainer(
+            model=student_model,
+            args=training_arguments,
+            train_dataset=train_dataset,
+            eval_dataset=val_dataset,
+            compute_metrics=compute_metrics,
+            teacher_model=teacher_model, 
+            alpha=0.5,  
+            temperature=2.0
+        )
 
     # Start training
     trainer.train()
     
     # Save the fine-tuned model
     trainer.save_model(f"{save_path}/best")  # Adjust save directory
-    trainer.evaluate(test_dataset)
+    eval_results = trainer.evaluate(test_dataset)
 
-
+    print("Evaluation Results:", eval_results)
 
 
 
