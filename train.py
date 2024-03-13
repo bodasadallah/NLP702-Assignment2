@@ -142,6 +142,7 @@ if __name__ == "__main__":
             intermediate_size= args.stu_intermediate_size,
             num_labels= num_labels,
             hidden_act=args.stu_hidden_act,
+            num_labels=num_labels
         )
         student_model = AutoModelForSequenceClassification.from_config(student_model_config)
         student_model.to(device)

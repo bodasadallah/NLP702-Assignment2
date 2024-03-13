@@ -136,12 +136,8 @@ def add_args(parser: argparse.ArgumentParser):
                             type=str,
                             nargs='+',
                             default=[
-                                "q_proj",
-                                "up_proj",
-                                "o_proj",
-                                "k_proj",
-                                "down_proj",
-                                "gate_proj",
-                                "v_proj",
+                                "query",
+                                "key",
+                                "value",
                             ])
 
