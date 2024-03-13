@@ -131,17 +131,14 @@ def add_args(parser: argparse.ArgumentParser):
                             default="none")
     parser.add_argument('--task_type',
                             type=str,
-                            default="CAUSAL_LM")
+                            default="SEQ_CLS")
     parser.add_argument('--lora_target_modules',
                             type=str,
                             nargs='+',
                             default=[
-                                "q_proj",
-                                "up_proj",
-                                "o_proj",
-                                "k_proj",
-                                "down_proj",
-                                "gate_proj",
-                                "v_proj",
+                                "query",
+                                "key",
+                                "value",
+                                "dense",
                             ])
 

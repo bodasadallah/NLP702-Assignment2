@@ -21,6 +21,21 @@ def compute_metrics(eval_pred):
     predictions = np.argmax(logits, axis=-1)
     return metric.compute(predictions=predictions, references=labels)
 
+# Reference for the following function: https://github.com/huggingface/peft/issues/41
+def print_trainable_parameters(model):
+    """
+    Prints the number of trainable parameters in the model.
+    """
+    trainable_params = 0
+    all_param = 0
+    for _, param in model.named_parameters():
+        all_param += param.numel()
+        if param.requires_grad:
+            trainable_params += param.numel()
+    print(
+        f"trainable params: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param}"
+    )
+
 class DistillationTrainer(Trainer):
     def __init__(self, teacher_model=None, alpha=0.5, temperature=2.0, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -111,14 +126,15 @@ if __name__ == "__main__":
             lora_dropout=lora_dropout,
             r=lora_r,
             bias="none",
-            task_type="CAUSAL_LM",
+            task_type="SEQ_CLS",
             target_modules = lora_target_modules)
         
     
         model = get_peft_model(base_model, lora_config)
-
+        
         print(model)
-
+        print("Model Training Parameters:")
+        print_trainable_parameters(model)
 
 
     elif args.training_type == 'finetuning':
@@ -126,6 +142,8 @@ if __name__ == "__main__":
         print( '*' * 20, 'Normal Finetuning ', '*' * 20)
         model = base_model
         print(model)
+        print("Model Training Parameters:")
+        print_trainable_parameters(model)
 
 
 
@@ -136,7 +154,8 @@ if __name__ == "__main__":
         teacher_model.eval()
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         teacher_model.to(device)
- 
+        print("Teacher Model Training Parameters:")
+        print_trainable_parameters(teacher_model)
         student_model_config = BertConfig(
             hidden_size= args.stu_hidden_size, 
             num_hidden_layers= args.stu_num_hidden_layers,
@@ -147,7 +166,8 @@ if __name__ == "__main__":
         )
         student_model = AutoModelForSequenceClassification.from_config(student_model_config)
         student_model.to(device)
-
+        print("Student Model Training Parameters:")
+        print_trainable_parameters(student_model)
     save_path = f'{args.save_dir}/{args.model_name}_{args.training_type}'
 
 

@@ -1,0 +1,238 @@
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at bert-large-uncased and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+training_type peft
+save_dir ./
+dataset_name old
+logging_dir ./logs
+report_to all
+epochs 6
+save_steps 500
+logging_steps 500
+max_seq_length 256
+evaluation_strategy steps
+eval_steps 500
+log_level info
+logging_strategy steps
+save_total_limit 2
+model_name bert-large-uncased
+output_dir ./experiments
+per_device_train_batch_size 16
+per_device_val_batch_size 8
+gradient_accumulation_steps 2
+learning_rate 0.0001
+max_grad_norm 0.3
+warmup_ratio 0.1
+lr_scheduler_type linear
+hidden_size 768
+num_hidden_layers 12
+num_attention_heads 12
+intermediate_size 3072
+hidden_act gelu
+stu_hidden_size None
+stu_num_hidden_layers None
+stu_num_attention_heads None
+stu_intermediate_size None
+stu_hidden_act gelu
+lora_alpha 16
+lora_dropout 0.1
+lora_r 64
+bias none
+task_type SEQ_CLS
+lora_target_modules ['query', 'key', 'value', 'dense']
+Loading dataset
+Map:   0%|          | 0/2033 [00:00<?, ? examples/s]Map:  49%|████▉     | 1000/2033 [00:00<00:00, 2733.66 examples/s]Map:  98%|█████████▊| 2000/2033 [00:00<00:00, 2818.68 examples/s]Map: 100%|██████████| 2033/2033 [00:00<00:00, 2696.05 examples/s]
+Detected kernel version 4.18.0, which is below the recommended minimum of 5.5.0; this can cause the process to hang. It is recommended to upgrade the kernel to the minimum version or higher.
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+wandb: Currently logged in as: afz225. Use `wandb login --relogin` to force relogin
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+wandb: wandb version 0.16.4 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.16.3
+wandb: Run data is saved locally in /scratch/afz225/nlp_assignment2/NLP702-Assignment2/wandb/run-20240314_004411-copikexx
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run sage-bush-221
+wandb: ⭐️ View project at https://wandb.ai/afz225/huggingface
+wandb: 🚀 View run at https://wandb.ai/afz225/huggingface/runs/copikexx
+******************** Finetuning Using LoRA ********************
+PeftModelForSequenceClassification(
+  (base_model): LoraModel(
+    (model): BertForSequenceClassification(
+      (bert): BertModel(
+        (embeddings): BertEmbeddings(
+          (word_embeddings): Embedding(30522, 1024, padding_idx=0)
+          (position_embeddings): Embedding(512, 1024)
+          (token_type_embeddings): Embedding(2, 1024)
+          (LayerNorm): LayerNorm((1024,), eps=1e-12, elementwise_affine=True)
+          (dropout): Dropout(p=0.1, inplace=False)
+        )
+        (encoder): BertEncoder(
+          (layer): ModuleList(
+            (0-23): 24 x BertLayer(
+              (attention): BertAttention(
+                (self): BertSelfAttention(
+                  (query): lora.Linear(
+                    (base_layer): Linear(in_features=1024, out_features=1024, bias=True)
+                    (lora_dropout): ModuleDict(
+                      (default): Dropout(p=0.1, inplace=False)
+                    )
+                    (lora_A): ModuleDict(
+                      (default): Linear(in_features=1024, out_features=64, bias=False)
+                    )
+                    (lora_B): ModuleDict(
+                      (default): Linear(in_features=64, out_features=1024, bias=False)
+                    )
+                    (lora_embedding_A): ParameterDict()
+                    (lora_embedding_B): ParameterDict()
+                  )
+                  (key): lora.Linear(
+                    (base_layer): Linear(in_features=1024, out_features=1024, bias=True)
+                    (lora_dropout): ModuleDict(
+                      (default): Dropout(p=0.1, inplace=False)
+                    )
+                    (lora_A): ModuleDict(
+                      (default): Linear(in_features=1024, out_features=64, bias=False)
+                    )
+                    (lora_B): ModuleDict(
+                      (default): Linear(in_features=64, out_features=1024, bias=False)
+                    )
+                    (lora_embedding_A): ParameterDict()
+                    (lora_embedding_B): ParameterDict()
+                  )
+                  (value): lora.Linear(
+                    (base_layer): Linear(in_features=1024, out_features=1024, bias=True)
+                    (lora_dropout): ModuleDict(
+                      (default): Dropout(p=0.1, inplace=False)
+                    )
+                    (lora_A): ModuleDict(
+                      (default): Linear(in_features=1024, out_features=64, bias=False)
+                    )
+                    (lora_B): ModuleDict(
+                      (default): Linear(in_features=64, out_features=1024, bias=False)
+                    )
+                    (lora_embedding_A): ParameterDict()
+                    (lora_embedding_B): ParameterDict()
+                  )
+                  (dropout): Dropout(p=0.1, inplace=False)
+                )
+                (output): BertSelfOutput(
+                  (dense): lora.Linear(
+                    (base_layer): Linear(in_features=1024, out_features=1024, bias=True)
+                    (lora_dropout): ModuleDict(
+                      (default): Dropout(p=0.1, inplace=False)
+                    )
+                    (lora_A): ModuleDict(
+                      (default): Linear(in_features=1024, out_features=64, bias=False)
+                    )
+                    (lora_B): ModuleDict(
+                      (default): Linear(in_features=64, out_features=1024, bias=False)
+                    )
+                    (lora_embedding_A): ParameterDict()
+                    (lora_embedding_B): ParameterDict()
+                  )
+                  (LayerNorm): LayerNorm((1024,), eps=1e-12, elementwise_affine=True)
+                  (dropout): Dropout(p=0.1, inplace=False)
+                )
+              )
+              (intermediate): BertIntermediate(
+                (dense): lora.Linear(
+                  (base_layer): Linear(in_features=1024, out_features=4096, bias=True)
+                  (lora_dropout): ModuleDict(
+                    (default): Dropout(p=0.1, inplace=False)
+                  )
+                  (lora_A): ModuleDict(
+                    (default): Linear(in_features=1024, out_features=64, bias=False)
+                  )
+                  (lora_B): ModuleDict(
+                    (default): Linear(in_features=64, out_features=4096, bias=False)
+                  )
+                  (lora_embedding_A): ParameterDict()
+                  (lora_embedding_B): ParameterDict()
+                )
+                (intermediate_act_fn): GELUActivation()
+              )
+              (output): BertOutput(
+                (dense): lora.Linear(
+                  (base_layer): Linear(in_features=4096, out_features=1024, bias=True)
+                  (lora_dropout): ModuleDict(
+                    (default): Dropout(p=0.1, inplace=False)
+                  )
+                  (lora_A): ModuleDict(
+                    (default): Linear(in_features=4096, out_features=64, bias=False)
+                  )
+                  (lora_B): ModuleDict(
+                    (default): Linear(in_features=64, out_features=1024, bias=False)
+                  )
+                  (lora_embedding_A): ParameterDict()
+                  (lora_embedding_B): ParameterDict()
+                )
+                (LayerNorm): LayerNorm((1024,), eps=1e-12, elementwise_affine=True)
+                (dropout): Dropout(p=0.1, inplace=False)
+              )
+            )
+          )
+        )
+        (pooler): BertPooler(
+          (dense): lora.Linear(
+            (base_layer): Linear(in_features=1024, out_features=1024, bias=True)
+            (lora_dropout): ModuleDict(
+              (default): Dropout(p=0.1, inplace=False)
+            )
+            (lora_A): ModuleDict(
+              (default): Linear(in_features=1024, out_features=64, bias=False)
+            )
+            (lora_B): ModuleDict(
+              (default): Linear(in_features=64, out_features=1024, bias=False)
+            )
+            (lora_embedding_A): ParameterDict()
+            (lora_embedding_B): ParameterDict()
+          )
+          (activation): Tanh()
+        )
+      )
+      (dropout): Dropout(p=0.1, inplace=False)
+      (classifier): ModulesToSaveWrapper(
+        (original_module): Linear(in_features=1024, out_features=60, bias=True)
+        (modules_to_save): ModuleDict(
+          (default): Linear(in_features=1024, out_features=60, bias=True)
+        )
+      )
+    )
+  )
+)
+Model Training Parameters:
+trainable params: 28504124 || all params: 363707512 || trainable%: 7.837100708549567
+  0%|          | 0/2160 [00:00<?, ?it/s]  0%|          | 1/2160 [00:03<1:49:23,  3.04s/it]                                                    0%|          | 1/2160 [00:03<1:49:23,  3.04s/it]  0%|          | 2/2160 [00:05<1:32:00,  2.56s/it]  0%|          | 3/2160 [00:07<1:26:21,  2.40s/it]  0%|          | 4/2160 [00:09<1:23:39,  2.33s/it]  0%|          | 5/2160 [00:11<1:22:04,  2.29s/it]  0%|          | 6/2160 [00:14<1:21:13,  2.26s/it]  0%|          | 7/2160 [00:16<1:20:51,  2.25s/it]  0%|          | 8/2160 [00:18<1:20:24,  2.24s/it]  0%|          | 9/2160 [00:20<1:20:05,  2.23s/it]  0%|          | 10/2160 [00:23<1:19:51,  2.23s/it]  1%|          | 11/2160 [00:25<1:19:50,  2.23s/it]  1%|          | 12/2160 [00:27<1:19:40,  2.23s/it]  1%|          | 13/2160 [00:29<1:19:32,  2.22s/it]  1%|          | 14/2160 [00:31<1:19:30,  2.22s/it]  1%|          | 15/2160 [00:34<1:19:26,  2.22s/it]  1%|          | 16/2160 [00:36<1:19:21,  2.22s/it]  1%|          | 17/2160 [00:38<1:19:19,  2.22s/it]  1%|          | 18/2160 [00:40<1:19:14,  2.22s/it]  1%|          | 19/2160 [00:42<1:19:14,  2.22s/it]  1%|          | 20/2160 [00:45<1:19:11,  2.22s/it]  1%|          | 21/2160 [00:47<1:19:15,  2.22s/it]  1%|          | 22/2160 [00:49<1:19:14,  2.22s/it]  1%|          | 23/2160 [00:51<1:19:10,  2.22s/it]  1%|          | 24/2160 [00:54<1:19:12,  2.22s/it]  1%|          | 25/2160 [00:56<1:19:27,  2.23s/it]  1%|          | 26/2160 [00:58<1:19:42,  2.24s/it]  1%|▏         | 27/2160 [01:00<1:19:29,  2.24s/it]  1%|▏         | 28/2160 [01:03<1:19:23,  2.23s/it]  1%|▏         | 29/2160 [01:05<1:19:15,  2.23s/it]  1%|▏         | 30/2160 [01:07<1:19:10,  2.23s/it]  1%|▏         | 31/2160 [01:09<1:19:07,  2.23s/it]  1%|▏         | 32/2160 [01:11<1:19:03,  2.23s/it]  2%|▏         | 33/2160 [01:14<1:19:02,  2.23s/it]  2%|▏         | 34/2160 [01:16<1:19:06,  2.23s/it]  2%|▏         | 35/2160 [01:18<1:19:07,  2.23s/it]  2%|▏         | 36/2160 [01:20<1:18:59,  2.23s/it]  2%|▏         | 37/2160 [01:23<1:19:00,  2.23s/it]  2%|▏         | 38/2160 [01:25<1:18:57,  2.23s/it]  2%|▏         | 39/2160 [01:27<1:18:56,  2.23s/it]  2%|▏         | 40/2160 [01:29<1:18:50,  2.23s/it]  2%|▏         | 41/2160 [01:32<1:18:52,  2.23s/it]  2%|▏         | 42/2160 [01:34<1:18:53,  2.23s/it]  2%|▏         | 43/2160 [01:36<1:18:52,  2.24s/it]  2%|▏         | 44/2160 [01:38<1:18:43,  2.23s/it]  2%|▏         | 45/2160 [01:41<1:18:43,  2.23s/it]  2%|▏         | 46/2160 [01:43<1:18:44,  2.23s/it]  2%|▏         | 47/2160 [01:45<1:18:41,  2.23s/it]  2%|▏         | 48/2160 [01:47<1:18:33,  2.23s/it]  2%|▏         | 49/2160 [01:49<1:18:35,  2.23s/it]  2%|▏         | 50/2160 [01:52<1:18:35,  2.23s/it]  2%|▏         | 51/2160 [01:54<1:18:36,  2.24s/it]  2%|▏         | 52/2160 [01:56<1:18:34,  2.24s/it]  2%|▏         | 53/2160 [01:58<1:18:57,  2.25s/it]  2%|▎         | 54/2160 [02:01<1:18:43,  2.24s/it]  3%|▎         | 55/2160 [02:03<1:18:38,  2.24s/it]  3%|▎         | 56/2160 [02:05<1:18:33,  2.24s/it]  3%|▎         | 57/2160 [02:07<1:18:28,  2.24s/it]  3%|▎         | 58/2160 [02:10<1:18:21,  2.24s/it]  3%|▎         | 59/2160 [02:12<1:18:19,  2.24s/it]  3%|▎         | 60/2160 [02:14<1:18:16,  2.24s/it]  3%|▎         | 61/2160 [02:16<1:18:15,  2.24s/it]  3%|▎         | 62/2160 [02:19<1:18:12,  2.24s/it]  3%|▎         | 63/2160 [02:21<1:18:12,  2.24s/it]  3%|▎         | 64/2160 [02:23<1:18:11,  2.24s/it]  3%|▎         | 65/2160 [02:25<1:18:08,  2.24s/it]  3%|▎         | 66/2160 [02:28<1:18:05,  2.24s/it]  3%|▎         | 67/2160 [02:30<1:18:00,  2.24s/it]  3%|▎         | 68/2160 [02:32<1:17:54,  2.23s/it]  3%|▎         | 69/2160 [02:34<1:18:01,  2.24s/it]  3%|▎         | 70/2160 [02:36<1:17:55,  2.24s/it]  3%|▎         | 71/2160 [02:39<1:17:56,  2.24s/it]  3%|▎         | 72/2160 [02:41<1:17:54,  2.24s/it]  3%|▎         | 73/2160 [02:43<1:17:52,  2.24s/it]  3%|▎         | 74/2160 [02:45<1:17:49,  2.24s/it]  3%|▎         | 75/2160 [02:48<1:17:44,  2.24s/it]  4%|▎         | 76/2160 [02:50<1:17:38,  2.24s/it]  4%|▎         | 77/2160 [02:52<1:17:37,  2.24s/it]  4%|▎         | 78/2160 [02:54<1:17:37,  2.24s/it]  4%|▎         | 79/2160 [02:57<1:17:36,  2.24s/it]  4%|▎         | 80/2160 [02:59<1:17:49,  2.25s/it]  4%|▍         | 81/2160 [03:01<1:17:44,  2.24s/it]  4%|▍         | 82/2160 [03:03<1:17:39,  2.24s/it]  4%|▍         | 83/2160 [03:06<1:17:34,  2.24s/it]  4%|▍         | 84/2160 [03:08<1:17:30,  2.24s/it]  4%|▍         | 85/2160 [03:10<1:17:28,  2.24s/it]  4%|▍         | 86/2160 [03:12<1:17:27,  2.24s/it]  4%|▍         | 87/2160 [03:15<1:17:26,  2.24s/it]  4%|▍         | 88/2160 [03:17<1:17:22,  2.24s/it]  4%|▍         | 89/2160 [03:19<1:17:21,  2.24s/it]  4%|▍         | 90/2160 [03:21<1:17:17,  2.24s/it]
