@@ -69,10 +69,11 @@ if __name__ == "__main__":
     test_dataset = train_val_test["test"]
     num_labels=len(train_dataset.features['label'].names)
 
-    tokenizer = BertTokenizerFast.from_pretrained(args.model_name)
+
+    tokenizer = BertTokenizerFast.from_pretrained(bert-base-uncased)
 
 
-    base_model = AutoModelForSequenceClassification.from_pretrained(args.model_name, num_labels=num_labels)
+    # base_model = AutoModelForSequenceClassification.from_pretrained(args.model_name, num_labels=num_labels)
 
     # Preprocess training and validation data
     train_dataset = train_dataset.map(tokenize_function,fn_kwargs={"tokenizer":tokenizer}, batched=True)
@@ -114,7 +115,8 @@ if __name__ == "__main__":
             task_type="CAUSAL_LM",
             target_modules = lora_target_modules)
         
-    
+        base_model = AutoModelForSequenceClassification.from_pretrained(args.model_name, num_labels=num_labels)
+
         model = get_peft_model(base_model, lora_config)
 
         print(model)
@@ -124,6 +126,8 @@ if __name__ == "__main__":
     elif args.training_type == 'finetuning':
 
         print( '*' * 20, 'Normal Finetuning ', '*' * 20)
+        base_model = AutoModelForSequenceClassification.from_pretrained(args.model_name, num_labels=num_labels)
+
         model = base_model
         print(model)
 
@@ -144,7 +148,6 @@ if __name__ == "__main__":
             intermediate_size= args.stu_intermediate_size,
             num_labels= num_labels,
             hidden_act=args.stu_hidden_act,
-            num_labels=num_labels
         )
         student_model = AutoModelForSequenceClassification.from_config(student_model_config)
         student_model.to(device)
@@ -208,6 +211,8 @@ if __name__ == "__main__":
 
     print("Evaluation Results:", eval_results)
 
+    push_to_hub_name = f"NLP702-{args.model_name}-{args.training_type}"
+    train.push_to_hub(push_to_hub_name)
 
 
 

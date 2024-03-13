@@ -18,9 +18,9 @@ SAVEDIR="/l/users/$USER/nlp702-hw2"
 #########################3 Normal Training ###############################
 
 # python train.py \
-# --save_dir='/home/george.ibrahim/Downloads/Semester 2/NLP702/Assignment 2/NLP702-Assignment2' \
+# --save_dir=$SAVEDIR \
 # --training_type="finetuning" \
-# --epochs=6 \
+# --epochs=15 \
 # --save_steps=500 \
 # --eval_steps=500 \
 # --logging_steps=500 \
@@ -38,24 +38,29 @@ SAVEDIR="/l/users/$USER/nlp702-hw2"
 
 ######################### Custom Model Training ############################
 
-# python train.py \
-# --training_type="custom" \
-# --epochs=6 \
-# --save_steps=500 \
-# --eval_steps=500 \
-# --logging_steps=500 \
-# --report_to="all" \
-# --model_name='bert-base-uncased' \
-# --per_device_train_batch_size=16 \
-# --per_device_val_batch_size=8 \
-# --warmup_ratio=0.1 \
-# --lr_scheduler_type="linear" \
-# --hidden_size=768 \
-# --num_attention_heads=1 \
-# --num_hidden_layers=6 \
-# --intermediate_size=3072 \
-# --hidden_act="gelu" \ 
-# echo "ending "
+# --model_name='hs=768_nh=32_nl=12' \
+# --model_name='hs=1024=128_nl=24' \
+
+
+python train.py \
+--save_dir=$SAVEDIR \
+--model_name='hs=768_nh=8_nl=6' \
+--training_type="custom" \
+--epochs=15 \
+--save_steps=500 \
+--eval_steps=500 \
+--logging_steps=500 \
+--report_to="all" \
+--per_device_train_batch_size=32 \
+--per_device_val_batch_size=8 \
+--warmup_ratio=0.1 \
+--lr_scheduler_type="linear" \
+--hidden_act="gelu" \ 
+--intermediate_size=3072 \
+--hidden_size=768 \
+--num_attention_heads=8 \
+--num_hidden_layers=6 \
+echo "ending "
 
 ########################## Distillation  ############################
 
@@ -103,25 +108,25 @@ SAVEDIR="/l/users/$USER/nlp702-hw2"
 
 ########################## Distillation  ############################
 
-# --model_name='bert-base-uncased' \
-python train.py \
---save_dir=$SAVEDIR \
---model_name=$SAVEDIR/bert-base-uncased_finetuning/best \
---training_type="distillation" \
---epochs=3 \
---save_steps=100 \
---eval_steps=100 \
---logging_steps=100 \
---report_to="all" \
---per_device_train_batch_size=8 \
---per_device_val_batch_size=8 \
---warmup_ratio=0.1 \
---lr_scheduler_type="linear" \
---learning_rate=1e-4 \
---stu_hidden_size=768 \
---stu_num_hidden_layers=4 \
---stu_num_attention_heads=4 \
---stu_intermediate_size=512 \
---stu_hidden_act="gelu" \
+# # --model_name='bert-base-uncased' \
+# python train.py \
+# --save_dir=$SAVEDIR \
+# --model_name=$SAVEDIR/bert-base-uncased_finetuning/best \
+# --training_type="distillation" \
+# --epochs=3 \
+# --save_steps=100 \
+# --eval_steps=100 \
+# --logging_steps=100 \
+# --report_to="all" \
+# --per_device_train_batch_size=8 \
+# --per_device_val_batch_size=8 \
+# --warmup_ratio=0.1 \
+# --lr_scheduler_type="linear" \
+# --learning_rate=1e-4 \
+# --stu_hidden_size=768 \
+# --stu_num_hidden_layers=4 \
+# --stu_num_attention_heads=4 \
+# --stu_intermediate_size=512 \
+# --stu_hidden_act="gelu" \
 
-echo "ending "
+# echo "ending "
