@@ -86,6 +86,7 @@ if __name__ == "__main__":
                                 num_hidden_layers=args.num_hidden_layers,
                                 num_attention_heads=args.num_attention_heads,
                                 intermediate_size=args.intermediate_size,
+                                num_labels= num_labels,
                                 hidden_act=args.hidden_act,
                             )
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -130,7 +131,8 @@ if __name__ == "__main__":
 
     elif args.training_type == 'distillation':
         print("*" * 20, "Distilling Model", "*" * 20)
-        teacher_model = AutoModelForSequenceClassification.from_pretrained(args.model_name, num_labels=num_labels)
+        path = "/home/george.ibrahim/Downloads/Semester 2/NLP702/Assignment 2/NLP702-Assignment2/bert-base-uncased_finetuning/best"
+        teacher_model = AutoModelForSequenceClassification.from_pretrained(path, num_labels=num_labels)
         teacher_model.eval()
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         teacher_model.to(device)
