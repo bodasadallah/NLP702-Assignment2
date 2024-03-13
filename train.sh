@@ -20,14 +20,14 @@ SAVEDIR="/l/users/$USER/nlp702-hw2"
 # python train.py \
 # --save_dir='/home/george.ibrahim/Downloads/Semester 2/NLP702/Assignment 2/NLP702-Assignment2' \
 # --training_type="finetuning" \
-# --epochs=3 \
-# --save_steps=100 \
-# --eval_steps=100 \
-# --logging_steps=100 \
+# --epochs=6 \
+# --save_steps=500 \
+# --eval_steps=500 \
+# --logging_steps=500 \
 # --report_to="all" \
 # --model_name='bert-base-uncased' \
-# --per_device_train_batch_size=4 \
-# --per_device_val_batch_size=4 \
+# --per_device_train_batch_size=16 \
+# --per_device_val_batch_size=8 \
 # --warmup_ratio=0.1 \
 # --lr_scheduler_type="linear" \
 # --learning_rate=1e-4 \
@@ -36,7 +36,28 @@ SAVEDIR="/l/users/$USER/nlp702-hw2"
 
 
 
-########################## Custom Model Training ############################
+######################### Custom Model Training ############################
+
+# python train.py \
+# --training_type="custom" \
+# --epochs=6 \
+# --save_steps=500 \
+# --eval_steps=500 \
+# --logging_steps=500 \
+# --report_to="all" \
+# --model_name='bert-base-uncased' \
+# --per_device_train_batch_size=16 \
+# --per_device_val_batch_size=8 \
+# --warmup_ratio=0.1 \
+# --lr_scheduler_type="linear" \
+# --hidden_size=768 \
+# --num_attention_heads=1 \
+# --num_hidden_layers=6 \
+# --intermediate_size=3072 \
+# --hidden_act="gelu" \ 
+# echo "ending "
+
+########################## Distillation  ############################
 
 
 
