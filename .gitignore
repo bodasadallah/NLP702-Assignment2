@@ -169,3 +169,4 @@ cython_debug/
 tr.sh
 
 bert-*/
+slurm*
