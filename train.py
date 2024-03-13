@@ -70,7 +70,7 @@ if __name__ == "__main__":
     num_labels=len(train_dataset.features['label'].names)
 
 
-    tokenizer = BertTokenizerFast.from_pretrained(bert-base-uncased)
+    tokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased')
 
 
     # base_model = AutoModelForSequenceClassification.from_pretrained(args.model_name, num_labels=num_labels)
@@ -212,7 +212,7 @@ if __name__ == "__main__":
     print("Evaluation Results:", eval_results)
 
     push_to_hub_name = f"NLP702-{args.model_name}-{args.training_type}"
-    train.push_to_hub(push_to_hub_name)
+    trainer.push_to_hub(push_to_hub_name)
 
 
 
