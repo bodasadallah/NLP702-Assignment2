@@ -1,7 +1,7 @@
 from args_parser import get_args
 from transformers import BertConfig, AutoModelForSequenceClassification,BertTokenizerFast, EarlyStoppingCallback
 from peft import get_peft_model, LoraConfig
-# import wandb
+import wandb
 from datasets import load_dataset
 from transformers import TrainingArguments, Trainer
 import evaluate
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     for arg in vars(args):
         print(arg, getattr(args, arg))
 
-    # wandb.init(project=f"nlphw2_{args.model_name}_{args.training_type}" )
+    wandb.init(project=f"nlphw2_{args.model_name}_{args.training_type}" )
     
     print("Loading dataset")
     # Load the Amazon Science Massive dataset (English)

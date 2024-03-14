@@ -17,50 +17,52 @@ SAVEDIR="/l/users/$USER/nlp702-hw2"
 
 #########################3 Normal Training ###############################
 
-python train.py \
---save_dir=$SAVEDIR \
---training_type="finetuning" \
---epochs=15 \
---save_steps=500 \
---eval_steps=500 \
---logging_steps=500 \
---report_to="all" \
---model_name='bert-base-uncased' \
---per_device_train_batch_size=16 \
---per_device_val_batch_size=8 \
---warmup_ratio=0.1 \
---lr_scheduler_type="linear" \
---learning_rate=1e-4 \
-echo "ending "
+# python train.py \
+# --save_dir=$SAVEDIR \
+# --training_type="finetuning" \
+# --epochs=15 \
+# --save_steps=500 \
+# --eval_steps=500 \
+# --logging_steps=500 \
+# --report_to="all" \
+# --model_name='bert-base-uncased' \
+# --per_device_train_batch_size=16 \
+# --per_device_val_batch_size=8 \
+# --warmup_ratio=0.1 \
+# --lr_scheduler_type="linear" \
+# --learning_rate=1e-4 \
+# echo "ending "
 
 
 
 
 ######################### Custom Model Training ############################
 
-# --model_name='hs=768_nh=32_nl=12' \
-# --model_name='hs=1024=128_nl=24' \
-
-
-# python train.py \
-# --save_dir=$SAVEDIR \
 # --model_name='hs=768_nh=8_nl=6' \
-# --training_type="custom" \
-# --epochs=15 \
-# --save_steps=500 \
-# --eval_steps=500 \
-# --logging_steps=500 \
-# --report_to="all" \
-# --per_device_train_batch_size=32 \
-# --per_device_val_batch_size=8 \
-# --warmup_ratio=0.1 \
-# --lr_scheduler_type="linear" \
-# --hidden_act="gelu" \ 
-# --intermediate_size=3072 \
-# --hidden_size=768 \
-# --num_attention_heads=8 \
-# --num_hidden_layers=6 \
-# echo "ending "
+# --model_name='hs=768_nh=32_nl=12' \
+# --model_name='hs1024-nh128-nl24' \
+# --model_name='hs1024-nh32-nl24' \
+
+
+python train.py \
+--model_name='hs768-nh16-nl8' \
+--hidden_size=768 \
+--num_attention_heads=16 \
+--num_hidden_layers=8 \
+--save_dir=$SAVEDIR \
+--training_type="custom" \
+--epochs=15 \
+--save_steps=500 \
+--eval_steps=500 \
+--logging_steps=500 \
+--report_to="all" \
+--per_device_train_batch_size=4 \
+--per_device_val_batch_size=8 \
+--warmup_ratio=0.1 \
+--lr_scheduler_type="linear" \
+--hidden_act="gelu" \
+--intermediate_size=3072 \
+echo "ending "
 
 ########################## Distillation  ############################
 
@@ -90,19 +92,17 @@ echo "ending "
 
 ########################## Peft ############################
 
-# --save_dir='/l/users/$USER/nlp702-hw2/'
-
 # python train.py \
-# --save_dir=/l/users/$USER/nlp702-hw2/ \
+# --save_dir=$SAVEDIR \
 # --training_type="peft" \
-# --epochs=3 \
+# --epochs=15 \
 # --save_steps=500 \
 # --eval_steps=500 \
 # --logging_steps=500 \
 # --report_to="all" \
-# --model_name='bert-base-uncased' \
-# --per_device_train_batch_size=8 \
-# --per_device_val_batch_size=8 \
+# --model_name='bert-large-uncased' \
+# --per_device_train_batch_size=16 \
+# --per_device_val_batch_size=16 \
 # --warmup_ratio=0.1 \
 # echo "ending "
 
